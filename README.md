@@ -4,7 +4,7 @@
 > flask 2.0.1
 ## 接口规范
 ### url 规范
-> {项目名称}/apis/{版本|v1等|v1beta1}/{namespace|test}/{url端点|userinfo}
+> {项目名称}/apis/{蓝图}/{版本|v1等|v1beta1}/{namespace|test}/{url端点|userinfo}
 ## 步骤
 ### 1
 > pip install -r requirements.txt         

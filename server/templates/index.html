@@ -39,20 +39,27 @@
 
 <script>
 
-    function reflashPage(data){
-        console.log('data',data)
-        if(data==1){
-          document.ItemFrm.location.href="/defaultApp/apis/zoo/v1/";
-        }
+function reflashPage(data){
+    //alert('1');
+    console.log('data',data)
+    if ( data == 1 ) {
+      document.ItemFrm.location.href="/defaultApp/apis/zoo/v1/";
+    } else if ( data == 2 ) {
+      document.ItemFrm.location.href="/defaultApp/apis/test/v1/";
+    } else if ( data == 3 ) {
+      document.ItemFrm.location.href="/defaultApp/apis/test/v1/";
+    } else if ( data == 4 ) {
+      document.ItemFrm.location.href="/defaultApp/apis/test/v1/";
     }
+}
 
 </script>
 
   </head>
 <body>
 
-<select onchange="reflashPage" class="select">
-  <option value="1" >test模块1</option>
+<select id="demo" onchange="reflashPage(this.options[this.options.selectedIndex].value)" class="select">
+  <option value="1" >zoo模块1</option>
   <option value="2" >test模块2</option>
   <option value="3" >test模块3</option>
   <option value="4" >test模块4</option>
