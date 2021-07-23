@@ -1,6 +1,6 @@
 # server api.py
 import os
-from flask import Blueprint, render_template
+from flask import Blueprint
 from flask_restx import Api
 
 # from server.apis.test.view import ns as test_ns
@@ -21,15 +21,23 @@ rootBP.register_blueprint(testBP)  # 将test子蓝图注册到根蓝图
 zooBP = Blueprint('zoo', __name__, url_prefix=f'/apis/zoo/{VERSION}')
 rootBP.register_blueprint(zooBP)  # 将zoo子蓝图注册到根蓝图
 
-from server.apis.test import api as testapi
+authBP = Blueprint('auth', __name__, url_prefix=f'/apis/auth/{VERSION}')
+rootBP.register_blueprint(authBP)  # 将zoo子蓝图注册到根蓝图
 
 # api 注册到 testBP 蓝图
+from server.apis.test import api as testapi
+
 testapi.init_app(testBP)
 
+# api 注册到 zooBP 蓝图
 from server.apis.zoo import api as zooapi
 
-# api 注册到 zooBP 蓝图
 zooapi.init_app(zooBP)
+
+# api 注册到 zooBP 蓝图
+from server.apis.auth import api as authapi
+
+authapi.init_app(authBP)
 
 # 自定义swagger ui
 # @api.documentation

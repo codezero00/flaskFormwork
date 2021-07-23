@@ -10,6 +10,6 @@ setup(
     install_requires=[
         'Flask>=2.0.1',
         # 'flask-cors',
-        'flask-restx',
+        'flask-restx==0.5.0',
     ]
 )
