@@ -1,11 +1,13 @@
 from flask_restx import Namespace, Resource, fields
 from flask import jsonify
+from server.jwt import requires_auth
 
 api = Namespace("auth", description="auth related operations keycloak 权限认证")
 
 @api.route("/url1/", strict_slashes=False)  # 实际访问地址 /api/test/
 class TestHandler(Resource):
 
+    @requires_auth
     def get(self):
         # 如果使用模板的块，需要使用 make_response
         # return make_response(render_template('index.html', data=res), 200)

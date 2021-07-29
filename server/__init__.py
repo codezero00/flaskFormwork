@@ -1,7 +1,7 @@
 # server  __init__.py
 from flask import Flask, render_template
 
-def create_app(config_filename):
+def create_app():
     # 1.实例化 app 实例
     app = Flask(__name__)
     # app.config.SWAGGER_UI_DOC_EXPANSION = 'none'  # 指定 swagger 初始展开状态
@@ -58,4 +58,3 @@ def register_blueprint(app):
     # 注册根蓝图 父类蓝图 [ps.嵌套蓝图]
     from server.api import rootBP
     app.register_blueprint(rootBP)
-

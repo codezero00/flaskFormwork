@@ -12,8 +12,9 @@ SECRET_KEY = 'asdfasdf'
 DEBUG = True
 
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", default='http://172.16.4.106:8080/auth/realms/master')
-API_IDENTIFIER = os.environ.get("API_IDENTIFIER", default='172.16.4.110')
+API_IDENTIFIER = os.environ.get("API_IDENTIFIER", default='')
 ALGORITHMS = ["RS256"]
+API_AUDIENCE = os.environ.get("API_IDENTIFIER", default='master-realm')
 
 # 自定义
 SQLALCHEMY_DATABASE_URI = 'sqlite://test.db'
