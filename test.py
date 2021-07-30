@@ -38,7 +38,8 @@ if rsa_key:
             audience=API_AUDIENCE,
             issuer=AUTH0_DOMAIN
         )
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError
+        print(AuthError({"code": "token_expired","description": "token is expired"}, 401))
         raise AuthError({"code": "token_expired",
                          "description": "token is expired"}, 401)
     except jwt.JWTClaimsError:
