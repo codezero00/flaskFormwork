@@ -17,7 +17,9 @@ ALGORITHMS = ["RS256"]
 API_AUDIENCE = os.environ.get("API_IDENTIFIER", default='master-realm')
 
 # 自定义
-SQLALCHEMY_DATABASE_URI = 'sqlite://test.db'
+# SQLALCHEMY_DATABASE_URI = 'sqlite://test.db'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:zyjs2018!@172.16.4.110:3306/sc'
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 __HOST = os.environ.get('HOST', default='172.16.4.110')
 __DATABASE = os.environ.get('DATABASE', default='sc')
 __USER = os.environ.get('USER', default='root')
