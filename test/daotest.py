@@ -28,6 +28,7 @@ Base.prepare(engine, reflect=True)
 Admin = Base.classes.sc_app
 '''
 
+
 # res = session.query(Admin).all()
 # print(res.id, res)
 # print(res)
@@ -42,11 +43,11 @@ Admin = Base.classes.sc_app
 # print(Admin)
 # print(type(Admin))
 #
-# class AdminSchema(ma.SQLAlchemySchema):
+# class AdminSchema(ma.SQLAlchemyAutoSchema):
 #     class Meta:
 #         model = Admin
 #         load_instance = True
-
+#
 # admin_schema = AdminSchema(many=True)  # 用已继承ma.ModelSchema类的自定制类生成序列化类
 # output = admin_schema.dump(res)  # 生成可序列化对象
 #
@@ -60,36 +61,95 @@ Admin = Base.classes.sc_app
 # dump_data = admin_schema.dump(author)
 # print(dump_data)
 
-
-# Base = automap_base(metadata=metadata) #从metadata中生成所有的映射关系为Base
-# Base.prepare(db.engine, reflect=True)
-# Admin2 = Base.classes.sc_app
-# # De = Base.classes.tbDeployment #将表映射到类上
+# 例子 2
+# 将所有现有表反射为SQLAlchemy 类
+# metadata = db.MetaData()
+Base = automap_base(metadata=db.metadata) #从metadata中生成所有的映射关系为Base
+Base.prepare(db.engine, reflect=True)
+Admin2 = Base.classes.sc_app
+# De = Base.classes.tbDeployment #将表映射到类上
 # print(Admin2)
+# print(type(Admin2))
 # res2 = db.session.query(Admin2).all()
 # print(res2)
-#
+
 # for result in db.session.query(Admin2).all():
 #     print(result.app_name)
 
-
-class sc_app(db.Model):
-    id = db.Column(db.String(50), primary_key=True)
-    app_name = db.Column(db.String(50))
-
-
-
-
-
-class ScappSchema(ma.SQLAlchemySchema):
+# 使用 Marshmallow 反序列化 SQLAlchemy
+# !!!!!! 注意   这里使用SQLAlchemyAutoSchema
+class ScappSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = sc_app
+        model = Admin2
+        include_fk = True
 
 
-
-
-one_user = sc_app.query.all()
-user_schema = ScappSchema(many=True) #用已继承ma.ModelSchema类的自定制类生成序列化类
+one_user = db.session.query(Admin2).all()
+user_schema = ScappSchema(many=True)  # 用已继承ma.ModelSchema类的自定制类生成序列化类
 print(one_user)
-output = user_schema.dump(one_user) #生成可序列化对象
+output = user_schema.dump(one_user)  # 生成可序列化对象
 print(output)
+
+
+
+# 例子 3
+
+# class sc_app(db.Model):
+#     id = db.Column(db.String(50), primary_key=True)
+#     app_name = db.Column(db.String(50))
+#
+#
+# # !!!!!! 注意   这里使用SQLAlchemyAutoSchema
+# class ScappSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = sc_app
+#         include_fk = True
+#
+#
+# one_user = sc_app.query.all()
+# user_schema = ScappSchema(many=True)  # 用已继承ma.ModelSchema类的自定制类生成序列化类
+# print(one_user)
+# output = user_schema.dump(one_user)  # 生成可序列化对象
+# print(output)
+
+
+# 例子 4
+
+# class Author(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(255))
+#
+#
+# class Book(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(255))
+#     author_id = db.Column(db.Integer, db.ForeignKey("author.id"))
+#     author = db.relationship("Author", backref="books")
+#
+#
+# class AuthorSchema(ma.SQLAlchemySchema):
+#     class Meta:
+#         model = Author
+#
+#     id = ma.auto_field()
+#     name = ma.auto_field()
+#     books = ma.auto_field()
+#
+#
+# class BookSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Book
+#         include_fk = True
+#
+#
+# db.create_all()  # 在数据库创建表
+# author_schema = AuthorSchema()
+# book_schema = BookSchema()
+# author = Author(name="Chuck Paluhniuk")
+# book = Book(title="Fight Club", author=author)
+# db.session.add(author)
+# db.session.add(book)
+# db.session.commit()
+# out = author_schema.dump(author)
+# # {'id': 1, 'name': 'Chuck Paluhniuk', 'books': [1]}
+# print(out)

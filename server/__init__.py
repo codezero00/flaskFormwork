@@ -1,6 +1,7 @@
 # server  __init__.py
 from flask import Flask, render_template, jsonify
 from server.jwt import AuthError
+from server.extension import cors, ma, db  # 加载扩展模块
 
 
 def create_app():
@@ -35,23 +36,20 @@ def create_app():
     return app
 
 
+# from server.extension import db
+# from extension import ma
+# from extension import migrate
+
 def register_extension(app):
     """
     加载扩展模块，并且配置各个模块
     :param app:
     :return:
     """
-    # 加载扩展模块
-    from server.extension import cors
-    # from server.extension import jwt
-    from server.extension import db
-    # from extension import ma
-    # from extension import migrate
     #  将扩展模块注册到app 中
     cors.init_app(app)
     db.init_app(app)
-    # jwt.init_app(app)
-    # ma.init_app(app)
+    ma.init_app(app)
     # migrate.init_app(app, db=db)
 
 
