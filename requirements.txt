@@ -6,3 +6,4 @@ mysql-connector
 flask-marshmallow
 marshmallow >= 2.0.0
 marshmallow-sqlalchemy
+flask-accepts

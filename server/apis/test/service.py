@@ -1,6 +1,6 @@
 """
-DAO层
-数据库操作层
+DAO层 和 service 层合并
+数据库操作层 和 服务层
 
 1. 例子
 class todo1DAO(object):
@@ -33,7 +33,7 @@ class todo1DAO(object):
 from .model import scapp, ScappSchema, session
 
 
-class AppDAO(object):
+class AppService(object):
     """
     sc_app表相关操作
     """

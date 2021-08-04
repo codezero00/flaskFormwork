@@ -1,9 +1,6 @@
 # server api.py
 import os
 from flask import Blueprint
-from flask_restx import Api
-
-# from server.apis.test.view import ns as test_ns
 
 # 定义项目名称 环境变量
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "defaultApp")
@@ -24,6 +21,9 @@ rootBP.register_blueprint(zooBP)  # 将zoo子蓝图注册到根蓝图
 authBP = Blueprint('auth', __name__, url_prefix=f'/apis/auth/{VERSION}')
 rootBP.register_blueprint(authBP)  # 将zoo子蓝图注册到根蓝图
 
+bestBP = Blueprint('bestex', __name__, url_prefix=f'/apis/bestex/{VERSION}')
+rootBP.register_blueprint(bestBP)  # 将zoo子蓝图注册到根蓝图
+
 # api 注册到 testBP 蓝图
 from server.apis.test import api as testapi
 
@@ -38,6 +38,17 @@ zooapi.init_app(zooBP)
 from server.apis.auth import api as authapi
 
 authapi.init_app(authBP)
+
+# api 注册到 bestEx 蓝图
+from server.apis.bestEx import api as bestapi
+
+bestapi.init_app(bestBP)
+
+
+
+
+
+
 
 # 自定义swagger ui
 # @api.documentation
