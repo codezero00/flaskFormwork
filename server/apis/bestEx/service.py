@@ -33,6 +33,8 @@ class todo1DAO(object):
 from .model import session
 from .model import scapp, ScappSchema
 from sqlalchemy import text
+from server.utils import Page, next_id
+
 
 class AppService(object):
     """
@@ -51,37 +53,83 @@ class AppService(object):
         """
         # 实例化ScappSchema 用已继承ma.ModelSchema类的自定制类生成序列化类 many=True 可以反序列化多条 many=False 只能反序列化一条
         one_res = session.query(self.__MODEL).filter(self.__MODEL.id == id).all()
+
         # 棉花糖 反序列化
         schema = self.__SCHEMA(many=True)
         output = schema.dump(one_res)  # 生成可序列化对象
         return output
 
-    def getList(self, data: dict) -> list:
+    def getPageList(self, data: dict) -> dict:
         """
-        查询列表 【多个查询】
+        查询列表 【分页查询】
         :param data: { CurrentPage PageSize Where OrderBy}
-        :return:
+        :return: dict(page=p.GetDict, res=list)
         """
         print(data)
-        # 实例化ScappSchema 用已继承ma.ModelSchema类的自定制类生成序列化类 many=True 可以反序列化多条 many=False 只能反序列化一条
-        one_res = session.query(self.__MODEL).filter(text("1=:p1")).params({'p1': 2}).order_by(text('id desc')).limit(10).offset(0).all()
-        # 棉花糖 反序列化
-        schema = self.__SCHEMA(many=True)
-        output = schema.dump(one_res)  # 生成可序列化对象
-        return output
+        # num = session.query(self.__MODEL).filter(text("1=:p1")).params({'p1': 1}).order_by(text('id desc')).count()
+        _text = data['Where'].get('text', '')  # 获取 where 字典 text值
+        _params = data['Where'].get('params', '')  # 获取 where 字典 params值
+        # 获取查询总条数值
+        num = session.query(self.__MODEL).filter(text(_text)).params(_params).order_by(text('id desc')).count()
+        p = Page(num, int(data['CurrentPage']), int(data['PageSize']))  # 构造page类
+        if num == 0:
+
+            return dict(page=p.GetDict, res=[])
+        else:
+            # 实例化ScappSchema 用已继承ma.ModelSchema类的自定制类生成序列化类 many=True 可以反序列化多条 many=False 只能反序列化一条
+            one_res = session.query(self.__MODEL).filter(text(_text)).params(_params).order_by(text('id desc')).limit(
+                p.limit).offset(p.offset).all()
+
+            # 棉花糖 反序列化
+            schema = self.__SCHEMA(many=True)
+            output = schema.dump(one_res)  # 生成可序列化对象
+            return dict(page=p.GetDict, res=output)
 
     def create(self, data):
-        newRecord = self.__MODEL(id=data['id'], app_name=data['app_name'])
+        """
+        插入一条数据
+        :param data:
+        :return:
+        """
+        data['id'] = next_id()
+        # del data['createtime'], data['updatetime']  # 不能使用del 无key值时会报错
+        data.pop('createtime', '')
+        data.pop('updatetime', '')
+        # newRecord = self.__MODEL(id=data['id'], app_name=data['app_name'])
+        newRecord = self.__MODEL(**data)
         session.add(newRecord)
         session.commit()
+
         # 棉花糖反序列化
         schema = self.__SCHEMA(many=False)
         output = schema.dump(newRecord)  # 生成可序列化对象
         return output
 
     def update(self, id, data):
-        pass
+        """
+        修改一条数据
+        :param id:
+        :param data:
+        :return:
+        """
+        # del data['id'], data['createtime'], data['updatetime']  # 不能使用del 无key值时会报错
+        data.pop('id', '')  # 删除id字段
+        data.pop('createtime', '')
+        data.pop('updatetime', '')
+        print(data)
+        # 根据Id查询需要更新的行
+        session.query(self.__MODEL).filter(self.__MODEL.id == id).update(data)
+        session.commit()
 
-    @staticmethod
+        return dict(id=id, data=data)
+
     def delete(self, id):
-        pass
+        """
+        删除一条数据
+        :param id:
+        :return:
+        """
+        session.query(self.__MODEL).filter(self.__MODEL.id == id).delete()
+        session.commit()
+
+        return dict(id=id)
